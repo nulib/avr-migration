@@ -40,14 +40,20 @@ sso_account_id = $AWS_ACCOUNT
 sso_role_name = AWSAdministratorAccess
 __EOC__
 
-cat >> $HOME/.bashrc <<__EOC__
-eval "$($HOME/.local/bin/mise activate bash)"
+mkdir -p $HOME/.bashrc.d
+echo 'eval "$($HOME/.local/bin/mise activate bash)"' > $HOME/.bashrc.d/mise.sh
+cat >> $HOME/.bashrc.d/aws_environment.sh <<__EOC__
 export AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
 export AWS_PROFILE=admin
 export AWS_REGION=us-east-1
-aws sts get-caller-identity > /dev/null 2>&1 || aws sso login
-eval "$(mise x direnv -- direnv hook bash)"
 __EOC__
+echo 'eval "$($HOME/.local/bin/mise x direnv -- direnv hook bash)"' > $HOME/.bashrc.d/direnv.sh
+
+cat > $HOME/.local/bin/aws-login <<__EOC__
+#!/bin/bash
+aws sts get-caller-identity > /dev/null 2>&1 || aws sso login
+__EOC__
+chmod +x $HOME/.local/bin/aws-login
 
 mkdir -p $HOME/.config/rclone
 cat >> $HOME/.config/rclone/rclone.conf <<__EOC__

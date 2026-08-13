@@ -1,7 +1,6 @@
 [tools]
 aws-cli = "2.36.22"
 direnv = "2.37.1"
-erlang = "27.3"
 java = "corretto-21.0.11.10.1"
 node = "24.11.1"
 python = "3.12.2"

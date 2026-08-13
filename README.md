@@ -73,7 +73,7 @@ exec $SHELL
 
 ### Download Fedora import/export and upgrade utilities
 ```shell
-curl -LO --output-dir bin https://github.com/nulib-labs/fcrepo-export-stream/releases/download/v0.2.0/fcrepo_export
+curl -LO -o bin/fcrepo_export https://github.com/nulib-labs/fcrepo-export-stream/releases/download/v0.3.0/fcrepo_export.linux.x64
 curl -LO --output-dir bin https://github.com/fcrepo-exts/fcrepo-import-export/releases/download/fcrepo-import-export-1.2.0/fcrepo-import-export-1.2.0.jar
 curl -LO --output-dir bin https://github.com/avalonmediasystem/fcrepo-upgrade-utils/releases/download/6.3.0-AVALON/fcrepo-upgrade-utils-6.3.0-AVALON.jar
 chmod 0755 bin/fcrepo_export

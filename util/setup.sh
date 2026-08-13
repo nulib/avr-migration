@@ -6,7 +6,7 @@ AWS_REGION=us-east-1
 
 # Install Development Tools and dependencies
 sudo dnf group install -y "Development Tools"
-sudo dnf install -y docker ncurses-devel openssl-devel postgresql16 tar unzip zip
+sudo dnf install -y docker ncurses-devel openssl-devel postgresql16 tar unzip xz zip
 sudo mkdir -p /usr/local/lib/docker/cli-plugins
 sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m)" -o /usr/libexec/docker/cli-plugins/docker-compose
 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose

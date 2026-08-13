@@ -1,0 +1,4 @@
+config/*.properties
+data/*/*
+bin/*
+*.log

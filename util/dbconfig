@@ -1,0 +1,8 @@
+#!/bin/bash
+
+CONFIG=$(aws secretsmanager get-secret-value --secret-id staging/infrastructure/aurora --query 'SecretString' --output text)
+
+export PGHOST=$(jq -r '.host' <<< "$CONFIG")
+export PGPORT=$(jq -r '.port' <<< "$CONFIG")
+export PGUSER=$(jq -r '.username' <<< "$CONFIG")
+export PGPASSWORD=$(jq -r '.password' <<< "$CONFIG")

@@ -1,0 +1,68 @@
+---
+services:
+  fcrepo6-s3:
+    profiles:
+      - s3
+    image: docker.io/fcrepo/fcrepo:6-tomcat9
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config/fcrepo.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
+  fcrepo6-local:
+    profiles:
+      - local
+    image: docker.io/fcrepo/fcrepo:6-tomcat9
+    # environment:
+    #   JAVA_OPTS: -Dfcrepo.log.kernel=DEBUG
+    ports:
+      - 8080:8080
+    volumes:
+      - ./data/${ENVIRONMENT}/fcrepo6_export/data:/usr/local/tomcat/fcrepo-home/data
+      - ./config/fcrepo-local.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
+  solr-9:
+    profiles:
+      - s3
+      - local
+      - solr
+    depends_on:
+      - zookeeper
+    image: docker.io/solr:9
+    ports:
+      - 8983:8983
+    environment:
+      SOLR_MODULES: analysis-extras,extraction
+      ZK_HOST: zookeeper:2181
+    command: >
+      bash -c "if ! bin/solr zk ls / | grep -q security.json; then echo '{\"authentication\":{\"blockUnknown\":false,\"class\":\"solr.BasicAuthPlugin\",\"credentials\":{\"search\":\"9ch2qWOmNSeGpfcgLRXafhm5z3KeRti5qCNLn7SmK1I= aXNjZWd4YW9mMzZ0cjE1Nw==\",\"index\":\"of9xlSadImtR0MH4obzJvKSZkuE5DIJh5NOui2hWDeA= dTRuYzU4Y3F4N2hxd2sxeA==\",\"admin\":\"6clS8rTEj1x1LP/uRCxOZsLdps7Sovokru09WdJX+7A= NGMyZGFhN2lrNHFsdXZybA==\",\"superadmin\":\"9wzPajmLBIIi8BmToy8lxveDxfL6Vl/BX/Ss3xrs3XQ= OWZna2hwendocXFnODU5ZQ==\",\"solrAdmin\":\"A2oHEolebFEJGnY1kEGzuNG8g/X0sichA6LACbYStdc= ++Qu1lA0833OB8zcyV2MVoRmVFIYBLSWQ1HbZxiF1H0=\"}},\"authorization\":{\"class\":\"solr.RuleBasedAuthorizationPlugin\",\"permissions\":[{\"name\":\"security-edit\",\"role\":\"superadmin\"},{\"name\":\"security-read\",\"role\":\"admin\"},{\"name\":\"config-edit\",\"role\":\"admin\"},{\"name\":\"config-read\",\"role\":\"admin\"},{\"name\":\"collection-admin-edit\",\"role\":\"admin\"},{\"name\":\"core-admin-edit\",\"role\":\"admin\"},{\"name\":\"core-admin-read\",\"role\":\"admin\"},{\"name\":\"read\",\"role\":\"search\"},{\"name\":\"collection-admin-read\",\"role\":\"search\"},{\"name\":\"update\",\"role\":\"index\"},{\"name\":\"health\",\"role\":null},{\"name\":\"metrics-read\",\"role\":null},{\"name\":\"all\",\"role\":\"admin\"}],\"user-role\":{\"search\":[\"search\"],\"index\":[\"index\",\"search\"],\"admin\":[\"admin\",\"index\",\"search\"],\"superadmin\":[\"superadmin\",\"admin\",\"index\",\"search\"],\"solrAdmin\":[\"superadmin\",\"admin\",\"search\",\"index\"]}},\"blockUnknown\":true}' > /tmp/security.json && bin/solr zk cp /tmp/security.json zk:security.json; fi && solr-foreground"
+    volumes:
+      - solr:/var/solr
+    ulimits:
+      nofile:
+        soft: "65536"
+        hard: "65536"
+  zookeeper:
+    profiles:
+      - s3
+      - local
+      - solr
+    image: 625046682746.dkr.ecr.us-east-1.amazonaws.com/zookeeper:3.9
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+      - 8081:8080
+    command: zkServer.sh start-foreground
+    environment:
+      ZOO_4LW_COMMANDS_WHITELIST: "*"
+  redis:
+    profiles:
+      - s3
+      - local
+    image: docker.io/redis:7.0.12-alpine
+    command: redis-server
+    ports:
+      - 6379:6379
+volumes:
+  fcrepo4-data:
+  postgres:
+  solr:

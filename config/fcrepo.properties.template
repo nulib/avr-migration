@@ -1,0 +1,7 @@
+fcrepo.db.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+fcrepo.db.user=${DB_USER}
+fcrepo.db.password=${DB_PASSWORD}
+fcrepo.storage=ocfl-s3
+fcrepo.ocfl.s3.region=${S3_REGION}
+fcrepo.ocfl.s3.bucket=${S3_BUCKET}
+fcrepo.ocfl.s3.prefix=${S3_PREFIX}

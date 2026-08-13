@@ -35,20 +35,24 @@ exec $SHELL
 
 ## Avalon 7.8 .. 8.2
 
-- [x] [Migrate Fedora data](#avr-fedora-4x-to-6x-data-migration) from 4.x to 6.x
-- [x] Stand up Fedora 6.x
-- [x] Checkout branch `nu/deploy/${ENVIRONMENT}`
-- [x] Install dependencies
+- [ ] [Migrate Fedora data](#avr-fedora-4x-to-6x-data-migration) from 4.x to 6.x
+- [ ] Stand up Fedora 6.x
+- [ ] Checkout correct branch
+    ```
+    cd $HOME/avalon
+    git switch nu/deploy/${ENVIRONMENT}
+    ```
+- [ ] Install dependencies
     ```
     bundle config set --local without production
     bundle config set --local with aws development test postgres
     bundle install
     ```
-- [x] Generate DB encryption keys and add to `terraform/${ENVIRONMENT}.tfvars`
+- [ ] Generate DB encryption keys and add to `terraform/${ENVIRONMENT}.tfvars`
     ```
     bundle exec rails db:encryption:init
     ```
-- [x] Apply terraform updates
+- [ ] Apply terraform updates
     ```
     cd terraform
     terraform init
@@ -56,14 +60,14 @@ exec $SHELL
     # Check output
     terraform apply ${ENVIRONMENT}.plan
     ```
-- [x] Generate local `.envrc` from AWS Config
+- [ ] Generate local `.envrc` from AWS Config
     ```
     script/avr_environment > .envrc-${ENVIRONMENT}
     ln -fs .envrc-${ENVIRONMENT} .envrc
     
     direnv allow
     ```
-- [x] Upload solr configs
+- [ ] Upload solr configs
   - Launch zk-shell
     ```
     zk-shell zookeeper-1.internal.${DOMAIN}
@@ -74,18 +78,41 @@ exec $SHELL
     cp file:///home/ec2-user/avalon/solr/conf /configs/avalon true true true true
     exit
     ```
-- [x] Create solr index
+- [ ] Create solr index
     ```
     bundle exec rails zookeeper:create
     ```
-- [x] Run database migrations
+- [ ] Run database migrations
     ```
     export RAILS_ENV=production
     bundle exec rails db:migrate
     bundle exec rails avalon:migrate:admin_units unit_admin_username=${AVR_ADMIN_EMAIL}
+    bundle exec rails r script/update_collection_units.rb 
     ACTIVE_RECORD_ENCRYPTION_MIGRATION=true bundle exec rails r 'ApiToken.all.each(&:encrypt)'
     ```
-- [x] Run (as a test) with `bundle exec guard -i`, but customizations will not be present
+- [ ] Sync migrated OCFL back to local storage
+    ```
+    cd $HOME/avr-migration
+    rclone sync --progress --delete-excluded s3:stack-s-fedora6-ocfl/ data/staging/fcrepo6_export/data/ocfl-root/
+    ```
+- [ ] Initialize Avalon's reindex table
+    ```
+    cd $HOME/avalon
+    script/hasmodel_to_db.rb -o $HOME/avr-migration/data/staging/fcrepo6_export/data/ocfl-root/
+    ```
+- [ ] Reindex all nodes
+    ```
+    for model in Hydra::AccessControl,Hydra::AccessControls::Permission Admin::Collection MediaObject MasterFile Derivative; do
+      nohup bundle exec rails r script/reindex.rb -v --parallel-indexing --parallel-threads 1 --only-models "$model" --skip-identification &
+    done
+    nohup bundle exec rails r script/reindex.rb -v --parallel-indexing --parallel-threads 1 --skip-identification &
+    ```
+- [ ] Wait for all 6 background processes to complete
+- [ ] Fix any indexing errors
+    ```
+    bundle exec rails r script/reindex_cleanup.rb 
+    ```
+- [ ] Run (as a test) with `bundle exec guard -i`, but customizations will not be present
 
 ## AVR Fedora 4.x to 6.x Data Migration
 

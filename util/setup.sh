@@ -25,7 +25,7 @@ mkdir -p $HOME/.config/mise
 cp mise.toml $HOME/.config/mise
 mise trust
 mise install
-pip install aws-sso-util zk-shell
+mise x python -- pip install aws-sso-util zk-shell
 
 # Configure the interactive shell environment
 mkdir -p $HOME/.aws

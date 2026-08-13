@@ -12,7 +12,6 @@ sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker
 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 sudo systemctl restart docker
 sudo usermod -aG docker $USER
-aws ecr get-login-password | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
 # Clone the repositories
 git clone git@github.com:nulib/avalon.git

@@ -29,7 +29,7 @@
 
 ### Install Dependencies & Tools and Configure Environment
 ```shell
-
+curl -s https://raw.githubusercontent.com/nulib/avr-migration/refs/heads/main/util/setup.sh | sh
 exec $SHELL
 ```
 

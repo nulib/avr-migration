@@ -11,7 +11,7 @@ sudo mkdir -p /usr/local/lib/docker/cli-plugins
 sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m)" -o /usr/libexec/docker/cli-plugins/docker-compose
 sudo chmod +x /usr/libexec/docker/cli-plugins/docker-compose
 sudo systemctl restart docker
-sudo usermod -a -G docker ec2-user
+sudo usermod -aG docker $USER
 aws ecr get-login-password | docker login --username AWS --password-stdin ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
 # Clone the repositories
@@ -21,7 +21,7 @@ cd avr-migration
 
 # Install Mise and tools
 curl https://mise.run | sh
-eval "$(/home/ec2-user/.local/bin/mise activate bash)"
+eval "$($HOME/.local/bin/mise activate bash)"
 mkdir -p $HOME/.config/mise
 cp mise.toml $HOME/.config/mise
 mise trust
@@ -42,7 +42,7 @@ sso_role_name = AWSAdministratorAccess
 __EOC__
 
 cat >> $HOME/.bashrc <<__EOC__
-eval "$(/home/ec2-user/.local/bin/mise activate bash)"
+eval "$($HOME/.local/bin/mise activate bash)"
 export AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account')
 export AWS_PROFILE=admin
 export AWS_REGION=us-east-1

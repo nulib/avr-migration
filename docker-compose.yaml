@@ -1,6 +1,6 @@
 ---
 services:
-  fcrepo6-s3:
+  fedora6-s3:
     profiles:
       - s3
     image: docker.io/fcrepo/fcrepo:6-tomcat9
@@ -8,7 +8,7 @@ services:
       - 8080:8080
     volumes:
       - ./config/fcrepo.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
-  fcrepo6-local:
+  fedora6-local:
     profiles:
       - local
     image: docker.io/fcrepo/fcrepo:6-tomcat9

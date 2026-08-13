@@ -40,6 +40,8 @@ exec $SHELL
 - [x] Checkout branch `nu/deploy/${ENVIRONMENT}`
 - [x] Install dependencies
     ```
+    bundle config set --local without production
+    bundle config set --local with aws development test postgres
     bundle install
     ```
 - [x] Generate DB encryption keys and add to `terraform/${ENVIRONMENT}.tfvars`
@@ -58,13 +60,29 @@ exec $SHELL
     ```
     script/avr_environment > .envrc-${ENVIRONMENT}
     ln -fs .envrc-${ENVIRONMENT} .envrc
+    
     direnv allow
+    ```
+- [x] Upload solr configs
+  - Launch zk-shell
+    ```
+    zk-shell zookeeper-1.internal.${DOMAIN}
+    ```
+  - Upload `solr.xml` and `security.json` if needed
+  - Run in zk-shell
+    ```
+    cp file:///home/ec2-user/avalon/solr/conf /configs/avalon true true true true
+    exit
+    ```
+- [x] Create solr index
+    ```
+    bundle exec rails zookeeper:create
     ```
 - [x] Run database migrations
     ```
     export RAILS_ENV=production
-    bundle exec rake db:migrate
-    bundle exec rake avalon:migrate:admin_units
+    bundle exec rails db:migrate
+    bundle exec rails avalon:migrate:admin_units unit_admin_username=${AVR_ADMIN_EMAIL}
     ACTIVE_RECORD_ENCRYPTION_MIGRATION=true bundle exec rails r 'ApiToken.all.each(&:encrypt)'
     ```
 - [x] Run (as a test) with `bundle exec guard -i`, but customizations will not be present

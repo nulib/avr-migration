@@ -73,7 +73,8 @@ exec $SHELL
 
 ### Download Fedora import/export and upgrade utilities
 ```shell
-curl -LO -o bin/fcrepo_export https://github.com/nulib-labs/fcrepo-export-stream/releases/download/v0.3.0/fcrepo_export.linux.x64
+mkdir -p bin
+curl -Lo bin/fcrepo_export https://github.com/nulib-labs/fcrepo-export-stream/releases/download/v0.3.0/fcrepo_export.linux.x64
 curl -LO --output-dir bin https://github.com/fcrepo-exts/fcrepo-import-export/releases/download/fcrepo-import-export-1.2.0/fcrepo-import-export-1.2.0.jar
 curl -LO --output-dir bin https://github.com/avalonmediasystem/fcrepo-upgrade-utils/releases/download/6.3.0-AVALON/fcrepo-upgrade-utils-6.3.0-AVALON.jar
 chmod 0755 bin/fcrepo_export
@@ -89,6 +90,7 @@ mkdir -p data/${ENVIRONMENT}
 
 ### Export data from Fedora 4.x
 ```shell
+mkdir -p data
 ./bin/fcrepo_export -r $FEDORA_BASE/rest/avr -d data/${ENVIRONMENT}/fcrepo4.7.5_export
 ./bin/fcrepo_export cleanup --apply --dir data/${ENVIRONMENT}/fcrepo4.7.5_export
 ```

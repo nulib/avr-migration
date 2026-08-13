@@ -39,34 +39,34 @@ exec $SHELL
 - [x] Stand up Fedora 6.x
 - [x] Checkout branch `nu/deploy/${ENVIRONMENT}`
 - [x] Install dependencies
-      ```
-      bundle install
-      ```
+    ```
+    bundle install
+    ```
 - [x] Generate DB encryption keys and add to `terraform/${ENVIRONMENT}.tfvars`
-      ```
-      bundle exec rails db:encryption:init
-      ```
+    ```
+    bundle exec rails db:encryption:init
+    ```
 - [x] Apply terraform updates
-      ```
-      cd terraform
-      terraform init
-      terraform plan -var-file ${ENVIRONMENT}.tfvars -out ${ENVIRONMENT}.plan
-      # Check output
-      terraform apply ${ENVIRONMENT}.plan
-      ```
+    ```
+    cd terraform
+    terraform init
+    terraform plan -var-file ${ENVIRONMENT}.tfvars -out ${ENVIRONMENT}.plan
+    # Check output
+    terraform apply ${ENVIRONMENT}.plan
+    ```
 - [x] Generate local `.envrc` from AWS Config
-      ```
-      script/avr_environment > .envrc-${ENVIRONMENT}
-      ln -fs .envrc-${ENVIRONMENT} .envrc
-      direnv allow
-      ```
+    ```
+    script/avr_environment > .envrc-${ENVIRONMENT}
+    ln -fs .envrc-${ENVIRONMENT} .envrc
+    direnv allow
+    ```
 - [x] Run database migrations
-      ```
-      export RAILS_ENV=production
-      bundle exec rake db:migrate
-      bundle exec rake avalon:migrate:admin_units
-      ACTIVE_RECORD_ENCRYPTION_MIGRATION=true bundle exec rails r 'ApiToken.all.each(&:encrypt)'
-      ```
+    ```
+    export RAILS_ENV=production
+    bundle exec rake db:migrate
+    bundle exec rake avalon:migrate:admin_units
+    ACTIVE_RECORD_ENCRYPTION_MIGRATION=true bundle exec rails r 'ApiToken.all.each(&:encrypt)'
+    ```
 - [x] Run (as a test) with `bundle exec guard -i`, but customizations will not be present
 
 ## AVR Fedora 4.x to 6.x Data Migration

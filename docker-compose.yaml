@@ -1,24 +1,27 @@
 ---
+x-fedora6: &fedora6
+  image: docker.io/fcrepo/fcrepo:6-tomcat9
+  ports:
+    - 8080:8080
+  volumes: &fedora6-local-volumes
+    - ./config/fcrepo-local.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
 services:
   fedora6-s3:
+    <<: *fedora6
     profiles:
       - s3
-    image: docker.io/fcrepo/fcrepo:6-tomcat9
-    ports:
-      - 8080:8080
-    volumes:
-      - ./config/fcrepo.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
+    volumes: 
+    - ./config/fcrepo.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
   fedora6-local:
+    <<: *fedora6
     profiles:
       - local
-    image: docker.io/fcrepo/fcrepo:6-tomcat9
-    # environment:
-    #   JAVA_OPTS: -Dfcrepo.log.kernel=DEBUG
-    ports:
-      - 8080:8080
-    volumes:
-      - ./data/${ENVIRONMENT}/fcrepo6_export/data:/usr/local/tomcat/fcrepo-home/data
-      - ./config/fcrepo-local.${ENVIRONMENT}.properties:/usr/local/tomcat/fcrepo-home/config/fcrepo.properties:ro
+  fedora6-reindex:
+    <<: *fedora6
+    profiles:
+      - reindex
+    environment:
+      JAVA_OPTS: -Dfcrepo.rebuild.on.start=true
   solr-9:
     profiles:
       - s3

@@ -33,7 +33,7 @@ cat > $HOME/.aws/config << __EOC__
 [profile admin]
 region = us-east-1
 output = json
-credential_process = aws-sso-util credential-process --profile awsadmin
+credential_process = aws-sso-util credential-process --profile admin
 sso_start_url = https://nu-sso.awsapps.com/start
 sso_region = us-east-2
 sso_account_id = $AWS_ACCOUNT

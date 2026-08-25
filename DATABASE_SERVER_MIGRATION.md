@@ -4,11 +4,11 @@
 - [ ] avr (`avr/terraform`):
   - [ ] get old password from `terraform state show module.db_schema.random_string.role_password`
   - [ ] `export PGHOST= PGPORT= PGUSER=avr PGPASSWORD=` with correct values
-  - [ ] `pg_dump -Fc --no-owner --no-acl -f avr_staging.dump avr`
+  - [ ] `pg_dump -Fc --no-owner --no-acl --exclude-table-data='public.searches' --exclude-table-data='public.sessions' -f avr_staging.dump avr`
 - [ ] arch (`arch/terraform`):
   - [ ] get old password from `terraform state show module.db_schema.random_string.role_password`
   - [ ] `export PGHOST= PGPORT= PGUSER=arch PGPASSWORD=` with correct values
-  - [ ] `pg_dump -Fc --no-owner --no-acl -f arch_staging.dump arch`
+  - [ ] `pg_dump -Fc --no-owner --no-acl --exclude-table-data='public.searches' -f arch_staging.dump arch`
 - [ ] fedora4 (`infrastructure/fcrepo`):
   - [ ] get old password from `terraform state show module.fcrepo_schema.random_string.role_password`
   - [ ] `export PGHOST= PGPORT= PGUSER=fcrepo PGPASSWORD=` with correct values
